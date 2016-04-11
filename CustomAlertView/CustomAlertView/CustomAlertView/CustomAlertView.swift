@@ -19,6 +19,9 @@ enum buttonDirection {
 
 class CustomAlertView: UIView {
 
+    //MARK:- Properties
+    var buttonWIDTH: CGFloat = 0
+    
     var buttonHeight: CGFloat = 50
     var buttonsDividerHeight: CGFloat = 1
     var cornerRadius: CGFloat = 7
@@ -37,6 +40,8 @@ class CustomAlertView: UIView {
     var buttonColorHighlighted: UIColor?
     var buttonBGColor: [String]? = []
     var alertBGColor: [String]? = ["#EFEEEC", "#EFEEEC", "#EFEEEC"]
+    var showButtonRadius: Bool = false
+    
     
     var alertButtonDirection = buttonDirection.buttonDirectionHorizontal
     
@@ -255,13 +260,33 @@ class CustomAlertView: UIView {
             return
         }
         
-        let buttonWidth = container.bounds.size.width / CGFloat(buttonTitles!.count)
+        let buttonWidth = buttonWIDTH > 0 ? buttonWIDTH : container.bounds.size.width / CGFloat(buttonTitles!.count)
         
-        var xCo = (buttonHeight * CGFloat((buttonTitles?.count)!))+(CGFloat(((buttonTitles?.count)! - 1)) * CGFloat(buttonMargin))
-        
-        xCo = self.calculateDialogSize().height - xCo - CGFloat(buttonMargin)
-        
+        //
         //create scroll view to add button in case button's height total is more than screen size
+        //
+        let scrScrollView: UIScrollView = UIScrollView.init()
+        scrScrollView.frame = CGRectMake(0, container.bounds.size.height - buttonHeight, container.frame.size.width, buttonHeight)
+        
+        var contentWidth:CGFloat = container.frame.size.width
+        var contentHeight:CGFloat = buttonHeight
+        
+        //Define content size of scrollview
+        switch alertButtonDirection {
+        case .buttonDirectionVertical:
+            //let total:CGFloat = (buttonHeight * CGFloat((buttonTitles?.count)!)) + (CGFloat(buttonMargin) * (CGFloat((buttonTitles?.count)!+1)))
+            let scrollViewHeight = container.bounds.size.height - containerView.frame.size.height
+            
+            
+            
+            scrScrollView.frame = CGRectMake(0, self.calculateDialogSize().height - scrollViewHeight, scrScrollView.frame.size.width, scrollViewHeight)
+            //scrScrollView.backgroundColor = UIColor.redColor()
+            break
+        default:
+            break
+        }
+        
+        var startY:CGFloat = CGFloat(buttonMargin)
         
         
         for buttonIndex in 0...(buttonTitles!.count - 1) {
@@ -272,14 +297,17 @@ class CustomAlertView: UIView {
                 case .buttonDirectionHorizontal:
                     button.frame = CGRectMake(
                         CGFloat(buttonIndex) * CGFloat(buttonWidth),
-                        container.bounds.size.height - buttonHeight,
+                        0,
                         buttonWidth,
                         buttonHeight
                     )
+                    contentWidth = buttonWidth * CGFloat((buttonTitles?.count)!) + buttonWidth/2 + 15.0
                     break
                 case .buttonDirectionVertical:
-                    button.frame = CGRectMake(10, xCo, container.bounds.size.width-20, buttonHeight)
-                    xCo = xCo+buttonHeight+CGFloat(buttonMargin)
+                    
+                    button.frame = CGRectMake(10, startY, container.bounds.size.width-20, buttonHeight)
+                    startY = startY + buttonHeight + CGFloat(buttonMargin)
+                    contentHeight = startY
                     break
             }
             
@@ -297,25 +325,31 @@ class CustomAlertView: UIView {
             button.setTitleColor(colorHighlighted, forState: UIControlState.Highlighted)
             button.setTitleColor(colorHighlighted, forState: UIControlState.Disabled)
             
+            if showButtonRadius {
+                button.layer.cornerRadius = cornerRadius
+            }
+            
             if buttonBGColor?.count>0 {
                 button.backgroundColor = buttonIndex >= buttonBGColor?.count ? UIColor.clearColor() : UIColor.init(hexString: buttonBGColor![buttonIndex])
             }
-            container.addSubview(button)
-            
+            //container.addSubview(button)
+            scrScrollView.addSubview(button)
+            container.addSubview(scrScrollView)
             // Show a divider between buttons
             if buttonIndex > 0 {
                 switch alertButtonDirection {
                 case .buttonDirectionHorizontal:
                     let verticalLineView = UIView(frame: CGRectMake(
-                        container.bounds.size.width / CGFloat(buttonTitles!.count) * CGFloat(buttonIndex),
-                        container.bounds.size.height - buttonHeight - buttonsDividerHeight,
+                        button.bounds.size.width * CGFloat(buttonIndex),
+                        0,//container.bounds.size.height - buttonHeight - buttonsDividerHeight
                         buttonsDividerHeight,
                         buttonHeight
                         ))
-                    
+                    //container.bounds.size.width / CGFloat(buttonTitles!.count) * CGFloat(buttonIndex)
                     verticalLineView.backgroundColor = UIColor(red: 198/255, green: 198/255, blue: 198/255, alpha: 1)
                     
-                    container.addSubview(verticalLineView)
+                    scrScrollView.addSubview(verticalLineView)
+                    //container.addSubview(verticalLineView)
                     break
                 default:
                     break
@@ -323,6 +357,10 @@ class CustomAlertView: UIView {
                 
             }
         }
+        
+        //Define content size of scrollview
+        
+        scrScrollView.contentSize = CGSizeMake(contentWidth, contentHeight)
     }
     
     // Calculate the size of the dialog

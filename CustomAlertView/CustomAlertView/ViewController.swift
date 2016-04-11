@@ -42,7 +42,6 @@ class ViewController: UIViewController, CustomAlertViewDelegate {
         sampleLabel.text = "Hello, AlertView!"
         
         containerView.addSubview(sampleLabel)
-        containerView.backgroundColor = UIColor.clearColor()
         return containerView
     }
 
@@ -65,11 +64,13 @@ class ViewController: UIViewController, CustomAlertViewDelegate {
         //}
         
         // Set the button titles array
-        objCustomAlert!.buttonTitles = ["OK", "Cancel", "Done" ]
+        objCustomAlert!.buttonTitles = ["OK", "Cancel", "Done"]
         //objCustomAlert!.showCloseButton = false
-        objCustomAlert!.alertBGColor = ["#3090C7", "#3090C9"]
+        objCustomAlert!.alertBGColor = ["#3090C7", "#3090D9"]
         objCustomAlert!.buttonBGColor = ["#93FFE8", "#93FFE8", "#93FFE8"]
         objCustomAlert!.alertButtonDirection = buttonDirection.buttonDirectionVertical
+        //objCustomAlert!.showButtonRadius = true
+        //objCustomAlert!.buttonWIDTH = 110;
         
         objCustomAlert!.show()
     }
@@ -78,7 +79,7 @@ class ViewController: UIViewController, CustomAlertViewDelegate {
     
     // Handle CustomAlertView button touches
     func customAlertViewButtonTouchUpInside(alertView: CustomAlertView, buttonIndex: Int) {
-        
+
         objCustomAlert!.close()
     }
     
