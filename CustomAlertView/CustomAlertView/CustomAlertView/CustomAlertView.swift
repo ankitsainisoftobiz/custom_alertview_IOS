@@ -17,6 +17,11 @@ enum buttonDirection {
     case buttonDirectionVertical
 }
 
+enum buttonStyle {
+    case buttonStyleDefault
+    case buttonStyleInnerView
+}
+
 class CustomAlertView: UIView {
 
     //MARK:- Properties
@@ -41,6 +46,8 @@ class CustomAlertView: UIView {
     var buttonBGColor: [String]? = []
     var alertBGColor: [String]? = ["#EFEEEC", "#EFEEEC", "#EFEEEC"]
     var showButtonRadius: Bool = false
+    var alertButtonStyle = buttonStyle.buttonStyleDefault
+    
     
     
     var alertButtonDirection = buttonDirection.buttonDirectionHorizontal
@@ -295,12 +302,26 @@ class CustomAlertView: UIView {
             
             switch alertButtonDirection {
                 case .buttonDirectionHorizontal:
-                    button.frame = CGRectMake(
-                        CGFloat(buttonIndex) * CGFloat(buttonWidth),
-                        0,
-                        buttonWidth,
-                        buttonHeight
-                    )
+                    
+                    let xCo = CGFloat(buttonIndex) * CGFloat(buttonWidth)
+                    
+                    if alertButtonStyle == buttonStyle.buttonStyleInnerView {
+                        button.frame = CGRectMake(
+                            xCo+5,
+                            5,
+                            buttonWidth-10,
+                            buttonHeight-10
+                        )
+                    }
+                    else{
+                        button.frame = CGRectMake(
+                            xCo,
+                            0,
+                            buttonWidth,
+                            buttonHeight
+                        )
+                    }
+                    
                     contentWidth = buttonWidth * CGFloat((buttonTitles?.count)!) + buttonWidth/2 + 15.0
                     break
                 case .buttonDirectionVertical:
@@ -335,21 +356,26 @@ class CustomAlertView: UIView {
             //container.addSubview(button)
             scrScrollView.addSubview(button)
             container.addSubview(scrScrollView)
+            
             // Show a divider between buttons
             if buttonIndex > 0 {
                 switch alertButtonDirection {
                 case .buttonDirectionHorizontal:
-                    let verticalLineView = UIView(frame: CGRectMake(
-                        button.bounds.size.width * CGFloat(buttonIndex),
-                        0,//container.bounds.size.height - buttonHeight - buttonsDividerHeight
-                        buttonsDividerHeight,
-                        buttonHeight
-                        ))
-                    //container.bounds.size.width / CGFloat(buttonTitles!.count) * CGFloat(buttonIndex)
-                    verticalLineView.backgroundColor = UIColor(red: 198/255, green: 198/255, blue: 198/255, alpha: 1)
+                    if alertButtonStyle == buttonStyle.buttonStyleDefault {
+                        
+                        let verticalLineView = UIView(frame: CGRectMake(
+                            button.bounds.size.width * CGFloat(buttonIndex),
+                            0,//container.bounds.size.height - buttonHeight - buttonsDividerHeight
+                            buttonsDividerHeight,
+                            buttonHeight
+                            ))
+                        //container.bounds.size.width / CGFloat(buttonTitles!.count) * CGFloat(buttonIndex)
+                        verticalLineView.backgroundColor = UIColor(red: 198/255, green: 198/255, blue: 198/255, alpha: 1)
+                        
+                        scrScrollView.addSubview(verticalLineView)
+                        //container.addSubview(verticalLineView)
+                    }
                     
-                    scrScrollView.addSubview(verticalLineView)
-                    //container.addSubview(verticalLineView)
                     break
                 default:
                     break

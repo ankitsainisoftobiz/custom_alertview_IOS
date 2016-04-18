@@ -40,6 +40,7 @@ class ViewController: UIViewController, CustomAlertViewDelegate {
         sampleLabel.center = CGPoint(x: containerView.frame.width / 2, y: containerView.frame.height / 2)
         sampleLabel.textAlignment = NSTextAlignment.Center
         sampleLabel.text = "Hello, AlertView!"
+        sampleLabel.textColor = UIColor.whiteColor()
         
         containerView.addSubview(sampleLabel)
         return containerView
@@ -64,12 +65,14 @@ class ViewController: UIViewController, CustomAlertViewDelegate {
         //}
         
         // Set the button titles array
-        objCustomAlert!.buttonTitles = ["OK", "Cancel", "Done"]
+        objCustomAlert!.buttonTitles = ["OK", "Cancel"]
         //objCustomAlert!.showCloseButton = false
-        objCustomAlert!.alertBGColor = ["#3090C7", "#3090D9"]
-        objCustomAlert!.buttonBGColor = ["#93FFE8", "#93FFE8", "#93FFE8"]
-        objCustomAlert!.alertButtonDirection = buttonDirection.buttonDirectionVertical
-        //objCustomAlert!.showButtonRadius = true
+        objCustomAlert!.alertBGColor = ["#0C0C2A", "#0C0C2A"]
+        objCustomAlert!.buttonBGColor = ["#FFFFFF", "#FFFFFF", "#FFFFFF"]
+        objCustomAlert!.buttonColor = UIColor.blackColor()
+        //objCustomAlert!.alertButtonDirection = buttonDirection.buttonDirectionVertical
+        objCustomAlert!.showButtonRadius = true
+        objCustomAlert!.alertButtonStyle = buttonStyle.buttonStyleInnerView
         //objCustomAlert!.buttonWIDTH = 110;
         
         objCustomAlert!.show()
