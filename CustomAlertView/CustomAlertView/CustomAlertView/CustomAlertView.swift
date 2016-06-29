@@ -384,8 +384,12 @@ class CustomAlertView: UIView {
             
             if buttonIcons != nil {
                 if buttonIcons?.count > 0 {
-                    button.setImage(UIImage(named:(buttonIndex >= buttonIcons?.count ? "" : buttonIcons![buttonIndex]) ), forState: .Normal)
+                    if buttonIndex < buttonIcons?.count {
+                        button.setImage(UIImage(named:buttonIcons![buttonIndex] ), forState: .Normal)
+                    }
                     button.contentHorizontalAlignment = .Left
+                    button.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0)
                 }
             }
             //container.addSubview(button)
