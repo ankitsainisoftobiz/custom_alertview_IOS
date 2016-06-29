@@ -70,10 +70,14 @@ class ViewController: UIViewController, CustomAlertViewDelegate {
         objCustomAlert!.alertBGColor = ["#0C0C2A", "#0C0C2A"]
         objCustomAlert!.buttonBGColor = ["#FFFFFF", "#FFFFFF", "#FFFFFF"]
         objCustomAlert!.buttonColor = UIColor.blackColor()
+        objCustomAlert!.buttonColorHighlighted = UIColor.blueColor()
         //objCustomAlert!.alertButtonDirection = buttonDirection.buttonDirectionVertical
         objCustomAlert!.showButtonRadius = true
         objCustomAlert!.alertButtonStyle = buttonStyle.buttonStyleInnerView
         //objCustomAlert!.buttonWIDTH = 110;
+        objCustomAlert!.buttonIcons = ["pr_comment"]
+        objCustomAlert!.alertDismiss = onTouchDismiss.touchDismissYES
+        
         
         objCustomAlert!.show()
     }

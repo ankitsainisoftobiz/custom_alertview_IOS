@@ -22,8 +22,13 @@ enum buttonStyle {
     case buttonStyleInnerView
 }
 
-class CustomAlertView: UIView {
+enum onTouchDismiss {
+    case touchDismissNO
+    case touchDismissYES
+}
 
+class CustomAlertView: UIView {
+    
     //MARK:- Properties
     var buttonWIDTH: CGFloat = 0
     
@@ -39,6 +44,7 @@ class CustomAlertView: UIView {
     var containerView: UIView!
     
     var buttonTitles: [String]? = ["Close"]
+    var buttonIcons: [String]?
     var showCloseButton:Bool?
     
     var buttonColor: UIColor?
@@ -47,7 +53,9 @@ class CustomAlertView: UIView {
     var alertBGColor: [String]? = ["#EFEEEC", "#EFEEEC", "#EFEEEC"]
     var showButtonRadius: Bool = false
     var alertButtonStyle = buttonStyle.buttonStyleDefault
+    var alertDismiss = onTouchDismiss.touchDismissNO
     
+    var btnDismiss: UIButton?
     
     
     var alertButtonDirection = buttonDirection.buttonDirectionHorizontal
@@ -61,16 +69,19 @@ class CustomAlertView: UIView {
     init() {
         super.init(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height))
         setObservers()
+        
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setObservers()
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setObservers()
+        
     }
     
     //MARK:- Create the dialog view and animate its opening
@@ -78,6 +89,7 @@ class CustomAlertView: UIView {
         if showCloseButton == false {
             buttonTitles = []
         }
+        addDismissTouch()
         show(nil)
     }
     
@@ -115,7 +127,23 @@ class CustomAlertView: UIView {
             }, completion: completion)
     }
     
-    // Close the alertView, remove views
+    //MARK:- Close the alertView, remove views
+    
+    internal func addDismissTouch() -> Void {
+        if alertDismiss == onTouchDismiss.touchDismissYES {
+            if btnDismiss == nil {
+                btnDismiss = UIButton.init(frame: self.bounds)
+                btnDismiss!.addTarget(self, action: #selector(dismissClicked(_:)), forControlEvents: .TouchUpInside)
+                self.insertSubview(btnDismiss!, atIndex: 0)
+            }
+            
+        }
+    }
+    
+    func dismissClicked(sender: UIButton) -> Void {
+        close()
+    }
+    
     internal func close() {
         close(nil)
     }
@@ -244,19 +272,19 @@ class CustomAlertView: UIView {
         
         gradient.frame = bounds
         gradient.cornerRadius = cornerRadius
-
+        
         let arrColors: NSMutableArray = []
         
         for j in alertBGColor! {
-           arrColors.addObject(UIColor.init(hexString:j).CGColor)
+            arrColors.addObject(UIColor.init(hexString:j).CGColor)
         }
         
         gradient.colors = arrColors as [AnyObject]
-//        gradient.colors = [
-//            UIColor(red: 218/255, green: 218/255, blue: 218/255, alpha:1).CGColor,
-//            UIColor(red: 233/255, green: 233/255, blue: 233/255, alpha:1).CGColor,
-//            UIColor(red: 218/255, green: 218/255, blue: 218/255, alpha:1).CGColor
-//        ]
+        //        gradient.colors = [
+        //            UIColor(red: 218/255, green: 218/255, blue: 218/255, alpha:1).CGColor,
+        //            UIColor(red: 233/255, green: 233/255, blue: 233/255, alpha:1).CGColor,
+        //            UIColor(red: 218/255, green: 218/255, blue: 218/255, alpha:1).CGColor
+        //        ]
         
         return gradient
     }
@@ -301,35 +329,35 @@ class CustomAlertView: UIView {
             let button = UIButton.init()
             
             switch alertButtonDirection {
-                case .buttonDirectionHorizontal:
-                    
-                    let xCo = CGFloat(buttonIndex) * CGFloat(buttonWidth)
-                    
-                    if alertButtonStyle == buttonStyle.buttonStyleInnerView {
-                        button.frame = CGRectMake(
-                            xCo+5,
-                            5,
-                            buttonWidth-10,
-                            buttonHeight-10
-                        )
-                    }
-                    else{
-                        button.frame = CGRectMake(
-                            xCo,
-                            0,
-                            buttonWidth,
-                            buttonHeight
-                        )
-                    }
-                    
-                    contentWidth = buttonWidth * CGFloat((buttonTitles?.count)!) + buttonWidth/2 + 15.0
-                    break
-                case .buttonDirectionVertical:
-                    
-                    button.frame = CGRectMake(10, startY, container.bounds.size.width-20, buttonHeight)
-                    startY = startY + buttonHeight + CGFloat(buttonMargin)
-                    contentHeight = startY
-                    break
+            case .buttonDirectionHorizontal:
+                
+                let xCo = CGFloat(buttonIndex) * CGFloat(buttonWidth)
+                
+                if alertButtonStyle == buttonStyle.buttonStyleInnerView {
+                    button.frame = CGRectMake(
+                        xCo+5,
+                        5,
+                        buttonWidth-10,
+                        buttonHeight-10
+                    )
+                }
+                else{
+                    button.frame = CGRectMake(
+                        xCo,
+                        0,
+                        buttonWidth,
+                        buttonHeight
+                    )
+                }
+                
+                contentWidth = buttonWidth * CGFloat((buttonTitles?.count)!) + buttonWidth/2 + 15.0
+                break
+            case .buttonDirectionVertical:
+                
+                button.frame = CGRectMake(10, startY, container.bounds.size.width-20, buttonHeight)
+                startY = startY + buttonHeight + CGFloat(buttonMargin)
+                contentHeight = startY
+                break
             }
             
             
@@ -352,6 +380,13 @@ class CustomAlertView: UIView {
             
             if buttonBGColor?.count>0 {
                 button.backgroundColor = buttonIndex >= buttonBGColor?.count ? UIColor.clearColor() : UIColor.init(hexString: buttonBGColor![buttonIndex])
+            }
+            
+            if buttonIcons != nil {
+                if buttonIcons?.count > 0 {
+                    button.setImage(UIImage(named:(buttonIndex >= buttonIcons?.count ? "" : buttonIcons![buttonIndex]) ), forState: .Normal)
+                    button.contentHorizontalAlignment = .Left
+                }
             }
             //container.addSubview(button)
             scrScrollView.addSubview(button)
@@ -530,7 +565,7 @@ class CustomAlertView: UIView {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
     }
-
+    
 }
 
 
